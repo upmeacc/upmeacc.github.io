@@ -8,8 +8,8 @@ let USER = null;
 let USER_BALANCE = {};
 const DECIMAL = 1000;
 
-const client = new dhive.Client(['https://hived.emre.sh']);
-const ssc = new SSC('https://herpc.dtools.dev');
+const client = new dhive.Client(['https://hive-api.arcange.eu']);
+const ssc = new SSC('https://engine.rishipanthee.com');
 
 // Checking if the already exists
 async function checkAccountName (username) {

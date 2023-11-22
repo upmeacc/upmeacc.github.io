@@ -11,6 +11,11 @@ const DECIMAL = 1000;
 const client = new dhive.Client(['https://hive-api.arcange.eu']);
 const ssc = new SSC('https://engine.rishipanthee.com');
 
+let hiveCoinGeckoAPI = "https://api.coingecko.com/api/v3/simple/price?ids=hive&vs_currencies=usd";
+let hiveMessariAPI = "https://data.messari.io/api/v1/assets/hive/metrics";
+let hiveCoinCapAPI = "https://api.coincap.io/v2/assets/hive-blockchain";
+let hiveCryptoCompareAPI = "https://min-api.cryptocompare.com/data/price?fsym=HIVE&tsyms=USD";
+
 // Checking if the already exists
 async function checkAccountName (username) {
     try

@@ -105,10 +105,10 @@ const getMarket = async () => {
     let price = 0.0, priceInUSD = 0.0;
     try
     {
-        const { data } = await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=hive&vs_currencies=usd");
+        //const { data } = await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=hive&vs_currencies=usd");
         const market = await ssc.findOne('market', 'metrics', { symbol: SYMBOL });    
         price = parseFloat(market.lastPrice);
-        let hivePrice = parseFloat(data.hive.usd);
+        let hivePrice = await getHiveUSD();
         // calculate price in USD
         priceInUSD = price * hivePrice;
         return { price, priceInUSD };
@@ -119,6 +119,96 @@ const getMarket = async () => {
         return { price, priceInUSD };
     }
 };
+
+// Check With USD Start Here
+
+async function getHiveUSD () {
+    var hiveUSD = 0.0;
+    try
+    {
+        hiveUSD = await getCryptoComparePrice();
+        if(hiveUSD <= 0)
+        {
+            hiveUSD = await getCoinGeckoPrice();
+            if(hiveUSD <= 0)
+            {
+                hiveUSD = await getCoinCapPrice();
+                if(hiveUSD <= 0)
+                {
+                    hiveUSD = await getMessariPrice();
+                }
+            }
+        }
+        return hiveUSD;
+    }
+    catch (error)
+    {
+        console.log("Error at getHiveUSD() : ", error);
+        return hiveUSD;
+    }
+};
+  
+async function getCoinGeckoPrice () {
+    var hPrice = 0.0;
+    try
+    {
+        const { data } = await axios.get(hiveCoinGeckoAPI);
+        hPrice = data.hive.usd;            
+        return hPrice;
+    }
+    catch (error)
+    {
+        console.log("Error at getCoinGeckoPrice() : ", error);
+        return hPrice;
+    }
+};
+  
+async function getMessariPrice () {
+    var hPrice = 0.0;
+    try
+    {
+        const { data } = await axios.get(hiveMessariAPI);
+        hPrice = data.data.market_data.price_usd;            
+        return hPrice;
+    }
+    catch (error)
+    {
+        console.log("Error at getMessariPrice() : ", error);
+        return hPrice;
+    }
+};
+  
+async function getCoinCapPrice () {
+    var hPrice = 0.0;
+    try
+    {
+        const { data } = await axios.get(hiveCoinCapAPI);
+        hPrice = data.data.priceUsd;            
+        return hPrice;
+    }
+    catch (error)
+    {
+        console.log("Error at getCoinCapPrice() : ", error);
+        return hPrice;
+    }
+};
+  
+async function getCryptoComparePrice () {
+    var hPrice = 0.0;
+    try
+    {
+        const { data } = await axios.get(hiveCryptoCompareAPI);
+        hPrice = data.USD;            
+        return hPrice;
+    }
+    catch (error)
+    {
+        console.log("Error at getCryptoComparePrice() : ", error);
+        return hPrice;
+    }
+};
+  
+// Check With USD End Here
 
 // get user balance
 const getUserBalance = async (account) => {
